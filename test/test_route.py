@@ -22,9 +22,11 @@ class TestRouter(AsyncTestCase):
 
         @route('get', '/users')
         async def test():
-            pass
+            return 'value'
 
-        await emit('get', '/users')
+        result = await emit('get', '/users')
+
+        self.assertEqual(result, 'value')
 
         methods([ 'create', 'read', 'update', 'delete' ])
 
