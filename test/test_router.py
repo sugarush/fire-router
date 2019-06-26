@@ -18,13 +18,13 @@ class TestRouter(AsyncTestCase):
 
     async def test_emit_with_custom_method(self):
 
-        router = Router()
+        router = Router(methods=[ 'create' ])
 
-        @router.get('/users')
+        @router.create('/users')
         async def test():
             return 'value'
 
-        result = await router.emit('get', '/users')
+        result = await router.emit('create', '/users')
 
         self.assertEqual(result, 'value')
 
