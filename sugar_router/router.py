@@ -2,9 +2,9 @@ import re
 
 
 def _compile(path):
-    return re.compile(re.sub('\:[^\/]*', '([^\/]*)', path))
+    return re.compile(re.sub('<([^\/]*)>', '(?P<\\1>[^\/]*)', path))
 
-
+    
 class Router(object):
 
     def __init__(self, methods=[ 'get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'trace', 'patch' ]):
@@ -35,7 +35,7 @@ class Router(object):
         for (regex, handler) in paths.items():
             match = regex.fullmatch(path)
             if match:
-                return (handler, match.groups())
+                return (handler, match.groupdict())
         return None
 
     def route(self, method, path):
@@ -44,8 +44,9 @@ class Router(object):
             paths[_compile(path)] = handler
         return wrapper
 
-    async def emit(self, method, path, **kargs):
-        handler, groups = self._match(method, path)
+    async def emit(self, method, path, *args, **kargs):
+        handler, groupdict = self._match(method, path)
+        kargs.update(groupdict)
         if not handler:
             return None
-        return await handler(*groups, **kargs)
+        return await handler(*args, **kargs)
