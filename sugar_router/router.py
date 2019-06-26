@@ -1,49 +1,51 @@
 import re
 
-__routes__ = { }
-__methods__ = [ 'create', 'read', 'update', 'delete' ]
-
-
-def methods(methods=None):
-    global __methods__
-    if methods:
-        __methods__ = list(methods)
-    else:
-        return __methods__
-
-def _check_method(method):
-    if not method in __methods__:
-        raise Exception(f'Method error: {method} not in {__methods__}')
-
-def _get_paths(routes, method):
-    _check_method(method)
-    if not routes.get(method):
-        routes[method] = { }
-    return routes[method]
 
 def _compile(path):
     return re.compile(re.sub('\:[^\/]*', '([^\/]*)', path))
 
-def _match(paths, path):
-    for (regex, handler) in paths.items():
-        match = regex.fullmatch(path)
-        if match:
-            return (handler, match.groups())
-    return None
 
-def route(method, path):
-    def wrapper(handler):
-        global __routes__
-        paths = _get_paths(__routes__, method)
-        paths[_compile(path)] = handler
-    return wrapper
+class Router(object):
 
-async def emit(method, path, **kargs):
-    _check_method(method)
-    paths = __routes__.get(method)
-    if not paths:
+    def __init__(self, methods=[ 'get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'trace', 'patch' ]):
+        self.__routes__ = { }
+        self.__methods__ = methods
+
+    def __getattribute__(self, name):
+        if name in super(Router, self).__getattribute__('__methods__'):
+            return lambda path: self.route(name, path)
+        else:
+            return super(Router, self).__getattribute__(name)
+
+    def _check_method(self, method):
+        if not method in self.__methods__:
+            raise Exception(f'Method error: {method} not in {self.__methods__}')
+
+    def _get_paths(self, method):
+        self._check_method(method)
+        if not self.__routes__.get(method):
+            self.__routes__[method] = { }
+        return self.__routes__[method]
+
+    def _match(self, method, path):
+        self._check_method(method)
+        paths = self.__routes__.get(method)
+        if not paths:
+            return None
+        for (regex, handler) in paths.items():
+            match = regex.fullmatch(path)
+            if match:
+                return (handler, match.groups())
         return None
-    handler, groups = _match(paths, path)
-    if not handler:
-        return None
-    return await handler(*groups, **kargs)
+
+    def route(self, method, path):
+        def wrapper(handler):
+            paths = self._get_paths(method)
+            paths[_compile(path)] = handler
+        return wrapper
+
+    async def emit(self, method, path, **kargs):
+        handler, groups = self._match(method, path)
+        if not handler:
+            return None
+        return await handler(*groups, **kargs)
