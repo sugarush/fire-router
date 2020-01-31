@@ -1,1 +1,1 @@
-unset MODULE
+set -e python_module
