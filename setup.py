@@ -13,9 +13,6 @@ setup(
     ],
     description='A lightweight event router.',
     install_requires=[
-        'fire_asynctest'
-    ],
-    dependency_links=[
-        'git+https://github.com/sugarush/fire-asynctest@master#egg=fire-asynctest'
+        'fire_asynctest@git+https://github.com/sugarush/fire-asynctest@master#egg=fire-asynctest-0.0.1'
     ]
 )
