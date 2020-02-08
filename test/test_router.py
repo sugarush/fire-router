@@ -1,7 +1,7 @@
-from fire_asynctest import AsyncTestCase
+from sugar_asynctest import AsyncTestCase
 
-from fire_router import Router
-from fire_router.router import _compile
+from sugar_router import Router
+from sugar_router.router import _compile
 
 
 class TestRouter(AsyncTestCase):

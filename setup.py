@@ -3,16 +3,16 @@ __author__ = 'Paul Severance'
 from setuptools import setup
 
 setup(
-    name='fire-router',
+    name='sugar-router',
     version='0.0.1',
     author='Paul Severance',
     author_email='paul.severance@gmail.com',
-    url='https://github.com/sugarush/fire-router',
+    url='https://github.com/sugarush/sugar-router',
     packages=[
-        'fire_router'
+        'sugar_router'
     ],
-    description='A lightweight event router.',
+    description='A asynchronous event router.',
     install_requires=[
-        'fire-asynctest@git+https://github.com/sugarush/fire-asynctest@master'
+        'sugar-asynctest@git+https://github.com/sugarush/sugar-asynctest@master'
     ]
 )
