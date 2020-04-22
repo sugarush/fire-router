@@ -4,8 +4,11 @@ import re
 def _compile(path):
     return re.compile(re.sub('<([^\/]*)>', '(?P<\\1>[^\/]*)', path))
 
-    
+
 class Router(object):
+    '''
+    A simple, asynchronous event router.
+    '''
 
     def __init__(self, methods=[ 'get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'trace', 'patch' ]):
         self.__routes__ = { }
@@ -39,12 +42,27 @@ class Router(object):
         return None
 
     def route(self, method, path):
+        '''
+        Add `method` to `path`.
+
+        :param self: Ignore this parameter when using as a decorator.
+        :param method: The `method` of the route.
+        :param path: The `path` of the route.
+        '''
         def wrapper(handler):
             paths = self._get_paths(method)
             paths[_compile(path)] = handler
         return wrapper
 
     async def emit(self, method, path, *args, **kargs):
+        '''
+        Trigger a `method` event for `path`.
+
+        :param method: The `method` to emit.
+        :param path: The `path` to emit to.
+        :param \*args: The arguments to provide to handlers.
+        :param \*\*kargs: The keyword arguments to provide to handlers.
+        '''
         handler, groupdict = self._match(method, path)
         kargs.update(groupdict)
         if not handler:
