@@ -43,9 +43,8 @@ class Router(object):
 
     def route(self, method, path):
         '''
-        Add `method` to `path`.
+        Add `method` to `path`. Should be used as a decorator.
 
-        :param self: Ignore this parameter when using as a decorator.
         :param method: The `method` of the route.
         :param path: The `path` of the route.
         '''
